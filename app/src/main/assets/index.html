@@ -1,27 +1,55 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>همه‌خوان</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1422"><title>همه‌خوان | OmniReader</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#09111f;color:#eef5ff;font:15px Tahoma,Arial,sans-serif;padding:20px}
-main{max-width:900px;margin:auto}.hero{padding:22px;border:1px solid #263b55;border-radius:22px;background:linear-gradient(135deg,#142a43,#0e1a2b)}
-h1{margin:0 0 8px;font-size:27px}.muted{color:#a9bdd4;line-height:1.9}.card{margin-top:18px;padding:18px;border:1px solid #263b55;border-radius:16px;background:#101d2e}
-button{border:0;border-radius:12px;background:#1688c7;color:white;padding:13px 18px;font:inherit;width:100%;margin-top:12px}
-.item{padding:14px;margin-top:10px;border-radius:12px;background:#0a1524;border:1px solid #2b405b;overflow-wrap:anywhere}
-small{color:#a9bdd4}.value{display:block;margin-top:6px}
+:root{color-scheme:dark;--bg:#08111e;--panel:#111f31;--panel2:#0d1929;--line:#263b55;--text:#edf5ff;--muted:#9db2ca;--blue:#42a5f5;--cyan:#5ed5d0;--warn:#f4c36a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -20%,#183858 0,transparent 45%),var(--bg);color:var(--text);font:15px Tahoma,Arial,sans-serif;padding:18px 14px calc(28px + env(safe-area-inset-bottom))}
+main{max-width:980px;margin:auto}.top{display:flex;align-items:center;gap:14px;padding:20px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(130deg,#173451,#101d2e);box-shadow:0 14px 36px #0005}
+.logo{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:#1d5279;font-size:27px}.top h1{font-size:24px;margin:0 0 7px}.muted{color:var(--muted);line-height:1.9}.panel{margin-top:15px;padding:17px;border:1px solid var(--line);border-radius:18px;background:#101d2eeb;box-shadow:0 8px 24px #0002}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.head strong{font-size:16px}.pill{font-size:12px;color:#bde9ff;background:#123b57;border:1px solid #245879;border-radius:30px;padding:5px 10px}
+button,.filepick{border:0;border-radius:12px;background:linear-gradient(135deg,#168bd0,#1767a8);color:white;padding:12px 16px;font:inherit;cursor:pointer}.filepick{display:inline-block}.ghost{background:#1a2b40;border:1px solid #304964}.search{width:100%;padding:13px;border-radius:12px;border:1px solid #304761;background:#091522;color:white;font:inherit;outline:none}.search:focus{border-color:var(--blue)}
+.file{padding:14px;margin-top:10px;border-radius:14px;background:var(--panel2);border:1px solid #293f59}.filetop{display:flex;justify-content:space-between;gap:10px;align-items:center}.filename{font-weight:bold;overflow-wrap:anywhere}.meta{color:var(--muted);font-size:12px;margin-top:7px;line-height:1.8}.file button{margin-top:12px;width:100%}
+#status{padding:12px;border-radius:12px;background:#0a1726;color:#c4d7e9;line-height:1.9;overflow-wrap:anywhere}.results{margin-top:12px}.hit{padding:12px;margin-top:8px;background:#0b1928;border:1px solid #29425e;border-radius:11px;overflow-wrap:anywhere;line-height:1.9}.hit b{color:var(--cyan)}.empty{padding:15px;text-align:center;color:var(--muted)}.bar{height:7px;background:#26384b;border-radius:8px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .15s}
+.note{font-size:12px;color:var(--muted);line-height:1.9}.hide{display:none!important}
+@media(min-width:650px){body{padding:28px}.top{padding:26px}.top h1{font-size:29px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid .panel{margin-top:15px}}
 </style></head>
 <body><main>
-<section class="hero"><h1>همه‌خوان</h1><div class="muted">خواندن، بررسی و جست‌وجوی فایل‌ها در یک محیط یکپارچه</div></section>
-<section class="card"><b>فایل‌های دریافت‌شده</b><div id="list" class="muted">هنوز فایلی از مدیر فایل دریافت نشده است. از گزینهٔ «باز کردن با…» برنامهٔ همه‌خوان را انتخاب کن.</div></section>
-<section class="card"><b>وضعیت پردازش</b><p class="muted" id="status">آماده دریافت فایل</p><input id="q" placeholder="جست‌وجو در نام فایل‌ها" style="width:100%;padding:12px;border-radius:10px;border:1px solid #304761;background:#09111f;color:white">
+<header class="top"><div class="logo">⌕</div><div><h1>همه‌خوان</h1><div class="muted">مرکز دریافت، بررسی و جست‌وجوی فایل‌ها — پردازش روی دستگاه</div></div></header>
+<section class="panel">
+<div class="head"><strong>فایل‌ها</strong><span class="pill" id="count">۰ فایل</span></div>
+<label class="filepick" for="picker">＋ انتخاب فایل از دستگاه</label><input id="picker" type="file" multiple hidden>
+<p class="note">همچنین می‌توانی از برنامهٔ «فایل‌های من» گزینهٔ «باز کردن با…» و سپس «همه‌خوان» را انتخاب کنی. اندازهٔ فایل تابع حافظه و محدودیت‌های دستگاه است؛ پذیرش فایل به‌تنهایی به معنی پشتیبانی از استخراج همهٔ قالب‌ها نیست.</p>
+<div id="list"><div class="empty">هنوز فایلی دریافت نشده است.</div></div>
 </section>
+<section class="panel">
+<div class="head"><strong>جست‌وجو در محتوای متنی</strong><span class="pill">جست‌وجوی جریانی</span></div>
+<input id="query" class="search" placeholder="عبارت مورد جست‌وجو را بنویس…" autocomplete="off">
+<p class="note">برای فایل‌های متنی مانند TXT، CSV، TSV، JSON، XML، HTML، MD و LOG. پردازش به‌صورت تکه‌ای انجام می‌شود تا فایل کامل یک‌باره در حافظه بارگذاری نشود.</p>
+<div id="status">آماده دریافت فایل.</div><div class="bar"><i id="progress"></i></div><div id="results" class="results"></div>
+</section>
+<section class="panel"><strong>دربارهٔ پشتیبانی قالب‌ها</strong><p class="note">این نسخهٔ پایه، دریافت فایل از اندروید، فهرست‌کردن، تشخیص اولیه و جست‌وجوی جریانی در متن را فراهم می‌کند. استخراج PDF، Word، Excel، Access، RAR/7Z و OCR به موتورهای تخصصی جداگانه نیاز دارد و تا زمان افزودن و آزمایش آن موتورها نباید پشتیبانی کامل آن‌ها را ادعا کرد.</p></section>
 </main>
 <script>
-let files=[];
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){const q=document.getElementById('q').value.toLocaleLowerCase();const shown=files.filter(f=>f.name.toLocaleLowerCase().includes(q));document.getElementById('list').innerHTML=shown.length?shown.map(f=>'<div class="item"><b>'+esc(f.name)+'</b><span class="value"><small>نوع فایل: '+esc(f.mime)+'</small></span><button onclick="inspectFile(\''+esc(f.url)+'\',\''+esc(f.name)+'\')">بررسی فایل</button></div>').join(''):'فایلی مطابق جست‌وجو نیست.'}
-async function inspectFile(url,name){document.getElementById('status').textContent='در حال بررسی '+name;try{const r=await fetch(url);if(!r.ok)throw Error('دریافت فایل ناموفق بود');const blob=await r.blob();document.getElementById('status').textContent='فایل دریافت شد: '+name+' — '+blob.size.toLocaleString('fa-IR')+' بایت. برای استخراج محتوای این قالب باید موتور تخصصی آن فعال باشد.'}catch(e){document.getElementById('status').textContent='خطا: '+e.message}}
-window.onAndroidFiles=function(incoming){files.push(...incoming);render();document.getElementById('status').textContent=incoming.length+' فایل از اندروید دریافت شد.'};
-document.getElementById('q').addEventListener('input',render);
+"use strict";
+const files=[];let active=null;
+const $=id=>document.getElementById(id);
+const fa=n=>Number(n||0).toLocaleString("fa-IR");
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function size(n){if(n<1024)return fa(n)+" بایت";if(n<1048576)return (n/1024).toFixed(1)+" کیلوبایت";if(n<1073741824)return (n/1048576).toFixed(1)+" مگابایت";return (n/1073741824).toFixed(2)+" گیگابایت";}
+function render(){ $("count").textContent=fa(files.length)+" فایل";$("list").innerHTML=files.length?files.map((f,i)=>'<article class="file"><div class="filetop"><span class="filename">'+esc(f.name)+'</span><span class="pill">'+esc(f.kind||"فایل")+'</span></div><div class="meta">نوع: '+esc(f.mime||"نامشخص")+' · حجم: '+size(f.size||0)+'</div><button class="ghost" data-open="'+i+'">جست‌وجو در این فایل</button></article>').join(""):'<div class="empty">هنوز فایلی دریافت نشده است.</div>';}
+function kind(name,mime){const ext=(name.split(".").pop()||"").toLowerCase();if(["txt","csv","tsv","json","xml","html","htm","md","log","yaml","yml","ini","sql"].includes(ext))return "متن";if(ext==="pdf"||mime==="application/pdf")return "PDF";if(["doc","docx","xls","xlsx","ppt","pptx"].includes(ext))return "سند";if(["zip","rar","7z","gz","tar"].includes(ext))return "آرشیو";if(["jpg","jpeg","png","gif","webp","bmp","svg"].includes(ext))return "تصویر";return "قالب دیگر";}
+function addLocal(list){for(const f of list)files.push({name:f.name,mime:f.type||"",size:f.size,kind:kind(f.name,f.type),source:f});render();}
+window.onAndroidFiles=function(items){for(const x of items)files.push({name:x.name||"فایل",mime:x.mime||"",size:0,kind:kind(x.name||"",x.mime),url:x.url});render();$("status").textContent=fa(items.length)+" فایل از اندروید دریافت شد. فایل موردنظر را برای جست‌وجو انتخاب کن.";};
+$("picker").addEventListener("change",e=>addLocal(e.target.files));
+$("list").addEventListener("click",e=>{const b=e.target.closest("[data-open]");if(b)searchFile(files[Number(b.dataset.open)]);});
+$("query").addEventListener("keydown",e=>{if(e.key==="Enter"&&active)searchFile(active);});
+async function searchFile(f){active=f;const q=$("query").value.trim();if(!q){$("status").textContent="ابتدا عبارت جست‌وجو را وارد کن.";return;}const ext=(f.name.split(".").pop()||"").toLowerCase();const allowed=["txt","csv","tsv","json","xml","html","htm","md","log","yaml","yml","ini","sql"];if(!allowed.includes(ext)){ $("status").textContent="جست‌وجوی محتوایی این نسخه برای این قالب فعال نیست. نوع فایل: "+(f.kind||"ناشناخته")+". برای جست‌وجوی آن باید موتور تخصصی قالب اضافه شود.";return;}
+$("results").innerHTML="";$("progress").style.width="0%";$("status").textContent="در حال خواندن و جست‌وجوی جریانی…";let reader,bytes=0,lineNo=0,carry="",hits=0;const decoder=new TextDecoder("utf-8");const total=f.size||0;
+try{let response;if(f.source){const stream=f.source.stream();reader=stream.getReader();}else{response=await fetch(f.url);if(!response.ok)throw Error("دریافت فایل ناموفق بود (HTTP "+response.status+")");if(!response.body)throw Error("مرورگر امکان خواندن جریانی این فایل را ندارد.");reader=response.body.getReader();}
+while(true){const part=await reader.read();if(part.done)break;bytes+=part.value.byteLength;const text=carry+decoder.decode(part.value,{stream:true});const lines=text.split(/\r?\n/);carry=lines.pop()||"";for(const line of lines){lineNo++;if(line.toLocaleLowerCase().includes(q.toLocaleLowerCase())){hits++;if(hits<=500){const div=document.createElement("div");div.className="hit";div.innerHTML="<b>خط "+fa(lineNo)+"</b><br>"+esc(line.slice(0,3000));$("results").appendChild(div);}}}if(total)$("progress").style.width=Math.min(99,bytes/total*100)+"%";$("status").textContent="بررسی "+size(bytes)+(total?" از "+size(total):"")+" · نتیجه: "+fa(hits);await new Promise(r=>setTimeout(r,0));}
+const tail=carry+decoder.decode();if(tail){lineNo++;if(tail.toLocaleLowerCase().includes(q.toLocaleLowerCase())){hits++;if(hits<=500){const div=document.createElement("div");div.className="hit";div.innerHTML="<b>خط "+fa(lineNo)+"</b><br>"+esc(tail.slice(0,3000));$("results").appendChild(div);}}}
+$("progress").style.width="100%";$("status").textContent="پایان جست‌وجو · "+fa(hits)+" نتیجه در "+fa(lineNo)+" خط"+(hits>500?" · فقط ۵۰۰ نتیجهٔ اول نمایش داده شد":"");if(!hits)$("results").innerHTML='<div class="empty">نتیجه‌ای پیدا نشد.</div>';
+}catch(err){$("status").textContent="خطا در پردازش: "+(err&&err.message?err.message:"خطای ناشناخته");}}
 </script></body></html>
