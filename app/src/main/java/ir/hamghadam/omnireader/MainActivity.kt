@@ -15,8 +15,11 @@ import java.util.concurrent.ConcurrentHashMap
 
 class MainActivity : Activity() {
     private data class SharedFile(val uri: Uri, val mime: String)
+    private data class PendingFile(val id: String, val name: String, val mime: String, val size: Long)
     private val sharedFiles = ConcurrentHashMap<String, SharedFile>()
+    private val pending = mutableListOf<PendingFile>()
     private lateinit var webView: WebView
+
     private val assetLoader by lazy {
         WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
@@ -43,6 +46,7 @@ class MainActivity : Activity() {
         webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 assetLoader.shouldInterceptRequest(request.url)
+
             override fun onPageFinished(view: WebView, url: String) {
                 super.onPageFinished(view, url)
                 deliverFiles()
@@ -62,7 +66,7 @@ class MainActivity : Activity() {
     private fun handleIncoming(source: Intent?) {
         if (source == null) return
         val uris = mutableListOf<Uri>()
-        source.data?.let { uris.add(it) }
+        source.data?.let(uris::add)
         source.clipData?.let { clip ->
             for (i in 0 until clip.itemCount) clip.getItemAt(i).uri?.let(uris::add)
         }
@@ -74,20 +78,28 @@ class MainActivity : Activity() {
             @Suppress("DEPRECATION")
             source.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)?.let(uris::addAll)
         }
+
         uris.distinct().forEach { uri ->
             val id = UUID.randomUUID().toString()
             val mime = contentResolver.getType(uri) ?: "application/octet-stream"
             sharedFiles[id] = SharedFile(uri, mime)
-            pending.add(mapOf("id" to id, "name" to displayName(uri), "mime" to mime))
+            val (name, size) = fileMetadata(uri)
+            pending.add(PendingFile(id, name, mime, size))
         }
     }
 
-    private val pending = mutableListOf<Map<String, String>>()
-    private fun displayName(uri: Uri): String {
-        contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
-            if (it.moveToFirst()) return it.getString(0) ?: "file"
+    private fun fileMetadata(uri: Uri): Pair<String, Long> {
+        var name = uri.lastPathSegment ?: "file"
+        var size = 0L
+        contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                if (nameIndex >= 0) name = cursor.getString(nameIndex) ?: name
+                if (sizeIndex >= 0 && !cursor.isNull(sizeIndex)) size = cursor.getLong(sizeIndex).coerceAtLeast(0L)
+            }
         }
-        return uri.lastPathSegment ?: "file"
+        return name to size
     }
 
     private fun deliverFiles() {
@@ -95,9 +107,10 @@ class MainActivity : Activity() {
         val json = org.json.JSONArray()
         pending.forEach { item ->
             json.put(org.json.JSONObject()
-                .put("name", item["name"])
-                .put("mime", item["mime"])
-                .put("url", "https://appassets.androidplatform.net/shared/" + item["id"]))
+                .put("name", item.name)
+                .put("mime", item.mime)
+                .put("size", item.size)
+                .put("url", "https://appassets.androidplatform.net/shared/" + item.id))
         }
         pending.clear()
         webView.post {
