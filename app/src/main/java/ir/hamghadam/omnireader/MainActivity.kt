@@ -43,6 +43,10 @@ class MainActivity : Activity() {
         webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 assetLoader.shouldInterceptRequest(request.url)
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                deliverFiles()
+            }
         }
         setContentView(webView)
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
