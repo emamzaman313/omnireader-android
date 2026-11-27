@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>همه‌خوان</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#09111f;color:#eef5ff;font:15px Tahoma,Arial,sans-serif;padding:20px}
+main{max-width:900px;margin:auto}.hero{padding:22px;border:1px solid #263b55;border-radius:22px;background:linear-gradient(135deg,#142a43,#0e1a2b)}
+h1{margin:0 0 8px;font-size:27px}.muted{color:#a9bdd4;line-height:1.9}.card{margin-top:18px;padding:18px;border:1px solid #263b55;border-radius:16px;background:#101d2e}
+button{border:0;border-radius:12px;background:#1688c7;color:white;padding:13px 18px;font:inherit;width:100%;margin-top:12px}
+.item{padding:14px;margin-top:10px;border-radius:12px;background:#0a1524;border:1px solid #2b405b;overflow-wrap:anywhere}
+small{color:#a9bdd4}.value{display:block;margin-top:6px}
+</style></head>
+<body><main>
+<section class="hero"><h1>همه‌خوان</h1><div class="muted">خواندن، بررسی و جست‌وجوی فایل‌ها در یک محیط یکپارچه</div></section>
+<section class="card"><b>فایل‌های دریافت‌شده</b><div id="list" class="muted">هنوز فایلی از مدیر فایل دریافت نشده است. از گزینهٔ «باز کردن با…» برنامهٔ همه‌خوان را انتخاب کن.</div></section>
+<section class="card"><b>وضعیت پردازش</b><p class="muted" id="status">آماده دریافت فایل</p><input id="q" placeholder="جست‌وجو در نام فایل‌ها" style="width:100%;padding:12px;border-radius:10px;border:1px solid #304761;background:#09111f;color:white">
+</section>
+</main>
+<script>
+let files=[];
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){const q=document.getElementById('q').value.toLocaleLowerCase();const shown=files.filter(f=>f.name.toLocaleLowerCase().includes(q));document.getElementById('list').innerHTML=shown.length?shown.map(f=>'<div class="item"><b>'+esc(f.name)+'</b><span class="value"><small>نوع فایل: '+esc(f.mime)+'</small></span><button onclick="inspectFile(\''+esc(f.url)+'\',\''+esc(f.name)+'\')">بررسی فایل</button></div>').join(''):'فایلی مطابق جست‌وجو نیست.'}
+async function inspectFile(url,name){document.getElementById('status').textContent='در حال بررسی '+name;try{const r=await fetch(url);if(!r.ok)throw Error('دریافت فایل ناموفق بود');const blob=await r.blob();document.getElementById('status').textContent='فایل دریافت شد: '+name+' — '+blob.size.toLocaleString('fa-IR')+' بایت. برای استخراج محتوای این قالب باید موتور تخصصی آن فعال باشد.'}catch(e){document.getElementById('status').textContent='خطا: '+e.message}}
+window.onAndroidFiles=function(incoming){files.push(...incoming);render();document.getElementById('status').textContent=incoming.length+' فایل از اندروید دریافت شد.'};
+document.getElementById('q').addEventListener('input',render);
+</script></body></html>
